@@ -28,6 +28,11 @@ mamba activate <env_name> # activate conda environment
 mamba deactivate # deactivate conda env
 ```
 
+To check which environments are available
+```
+mamba env list
+```
+
 # Config File
 An important aspect of this workflow is the `config.yaml` file. This file is used to track the samples and the path to the initial read files. 
 
@@ -43,7 +48,7 @@ SAMPLES:
     - data/sam-2_R2_paired.fastq.gz
 ...
 
-CHECKM_DB: <path_to_checkm_db> # to get these databsases it's explained below
+CHECKM_DB: <path_to_checkm_db> # How to get these databases? it's explained below
 
 GTDBTK_DB: <path_to_gtdbtk_db>
 ```
@@ -107,6 +112,23 @@ usage: ./04_MAGs_QC_taxa.sh
 -c <config> # config file 
 -m <mags directory> # output directory of 03_MAG_binning.sh 
 ```
+
+#### Notes
+This part require you to have installed the checkm and gtdbtk databases. Once you have created the MAGs_QC_taxa_env.yaml conda environment:
+```
+conda activate MAGs_QC_taxa_env
+cd <directory/where/you/want/your/databases/to/be>
+
+# checkm database
+wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz
+tar xvzf checkm_data_2015_01_16.tar.gz
+
+# gtdbtk database
+wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_package/full_package/gtdbtk_data.tar.gz #~110GB, will take time
+tar xvzf gtdbtk_data.tar.gz
+```
+
+Then put the paths of the unzipped databases in the config file (see above)
 
 # Some Important Tips
 

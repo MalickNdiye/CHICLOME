@@ -15,6 +15,14 @@ do
     esac
 done
 
+# check if arguments are provided
+if [ -z "$out" ] || [ -z "$config" ] || [ -z "$mags" ]
+then
+    echo "Arguments missing"
+    echo "usage: $0 -o <output> -c <config> -m <mags directory>"
+    exit 1
+fi
+
 # set config file
 config_file=$config
 

@@ -130,6 +130,18 @@ tail -n +2 $simka_file | while read -r asmbl sam
         R1=$(echo $R1 | sed 's/"//g')
         R2=$(echo $R2 | sed 's/"//g') # strip quotes
 
+        # R1 and R2 path are relative to the config file, we to adjust them to be relative to the script
+        # if the path is already absolute or starts with ~ we don't need to do anything
+        if [[ ! $R1 == /* ]] && [[ ! $R1 == ~* ]]
+            then
+                R1=$(dirname $config_file)/$R1
+                R2=$(dirname $config_file)/$R2
+        fi
+
+        # get absolute path
+        R1=$(realpath $R1)
+        R2=$(realpath $R2)
+
         # get the output directory
         out_dir=$tmp/$asmbl
 

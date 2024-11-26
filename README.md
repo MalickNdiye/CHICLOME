@@ -68,7 +68,7 @@ Each directory contains the scripts for a part of the workflow. The script that 
 
 It is possible to run each auxiliary script by itself, this can be useful for debugging or test runs. However, at the end make sure that the directory structure of the output is the same as the one created by the wrapper script, otherwise this may cause issues for future wrappers.
 
-each wrapper script will create a log directory that the user need
+each wrapper script will create a log directory in the same directory as the wrapper. This is useful for debugging purposes.
 
 ## 01_assembly
 This section of the workflow uses [megahit](https://github.com/voutcn/megahit) to assemble the metagenomes. Then, it runs [QUAST](https://github.com/ablab/quast) to evaluate the assembly quality (download the `report.hml` from the output files to have an overview of the assembly). finally, it runs multiqc to aggragate all the QUAST reports in a single html file that can be explored on your favourite browser.

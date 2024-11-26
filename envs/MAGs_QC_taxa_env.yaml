@@ -1,0 +1,7 @@
+name: MAGs_QC_taxa_env
+channels:
+ - bioconda
+ - conda-forge
+dependencies:
+ - checkm-genome
+ - gtdbtk=2.1.1

@@ -1,0 +1,10 @@
+name: mag_binning_env
+channels:
+ - bioconda
+ - conda-forge
+ - defaults
+dependencies:
+ - bowtie2
+ - metabat2
+ - fairy
+ - samtools

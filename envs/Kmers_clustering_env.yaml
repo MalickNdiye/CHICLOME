@@ -1,0 +1,15 @@
+name: Kmers_clustering_env
+channels:
+ - bioconda
+ - conda-forge
+ - defaults
+ - anaconda
+ - r
+dependencies:
+ - simka
+ - r-base
+ - r-data.table
+ - r-ggplot2
+ - r-tidyverse
+ - r-rcolorbrewer
+ - r-gplots

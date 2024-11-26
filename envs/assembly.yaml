@@ -1,0 +1,11 @@
+name: assembly_env
+channels:
+ - bioconda
+ - conda-forge
+ - defaults
+ - anaconda
+dependencies:
+ - megahit
+ - quast
+ - yq
+ - multiqc

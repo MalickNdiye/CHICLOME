@@ -114,62 +114,68 @@ while read -r asmbl sam; do
     fi
 done < <(tail -n +2 "$simka_file")
 
-# iterate over the line of the simka file, skip the header
-tail -n +2 $simka_file | while read -r asmbl sam
-    do
+# if the number of files in all the subdirectories of $tmp is equal to the number of rows in the simka file (without the header) then all backmapping jobs were created
+if [ $(find $tmp -type f -ls | wc -l) -eq $(tail -n +2 $simka_file | wc -l) ]
+then
+    echo -e "\nAll backmapping jobs were created, skipping"
+else 
+    echo -e "\nNot all backmapping jobs were created, running the backmapping"
+    # iterate over the line of the simka file, skip the header
+    tail -n +2 $simka_file | while read -r asmbl sam
+        do
 
-        # get the index directory
-        index=$out/index/$asmbl/index
+            # get the index directory
+            index=$out/index/$asmbl/index
 
-        # add quotes to the sample name
-        sam_n="\"$sam\""
+            # add quotes to the sample name
+            sam_n="\"$sam\""
 
-        # get the reads
-        R1=$(yq ".SAMPLES.$sam_n[0]" $config_file)
-        R2=$(yq ".SAMPLES.$sam_n[1]" $config_file)
-        R1=$(echo $R1 | sed 's/"//g')
-        R2=$(echo $R2 | sed 's/"//g') # strip quotes
+            # get the reads
+            R1=$(yq ".SAMPLES.$sam_n[0]" $config_file)
+            R2=$(yq ".SAMPLES.$sam_n[1]" $config_file)
+            R1=$(echo $R1 | sed 's/"//g')
+            R2=$(echo $R2 | sed 's/"//g') # strip quotes
 
-        # R1 and R2 path are relative to the config file, we to adjust them to be relative to the script
-        # if the path is already absolute or starts with ~ we don't need to do anything
-        if [[ ! $R1 == /* ]] && [[ ! $R1 == ~* ]]
-            then
-                R1=$(dirname $config_file)/$R1
-                R2=$(dirname $config_file)/$R2
-        fi
-
-        # get absolute path
-        R1=$(realpath $R1)
-        R2=$(realpath $R2)
-
-        # get the output directory
-        out_dir=$tmp/$asmbl
-
-        # check if there are less than 100 jobs running
-        while [ $(squeue -u $USER | grep backmap | wc -l) -gt 100 ]
-            do
-                echo -e "\tMore than 100 jobs are running, waiting..."
-                sleep 10
-            done
-        
-        # check if the output file already exists, if yes skip the creation
-        if [ -f $out_dir/${sam}_mapping.depth ]
-            then
-                echo -e "\n\tBackmapping of $asmbl for $sam already exists, skipping"
-                continue
+            # R1 and R2 path are relative to the config file, we to adjust them to be relative to the script
+            # if the path is already absolute or starts with ~ we don't need to do anything
+            if [[ ! $R1 == /* ]] && [[ ! $R1 == ~* ]]
+                then
+                    R1=$(dirname $config_file)/$R1
+                    R2=$(dirname $config_file)/$R2
             fi
 
-        # if more than 100 jobs are already running, wait until there are less than 100 jobs running
-        while [ $(squeue -u $USER | grep backmap | wc -l) -gt 100 ]
-            do
-                echo -e "\tMore than 100 jobs are running, waiting..."
-                sleep 10
-            done
+            # get absolute path
+            R1=$(realpath $R1)
+            R2=$(realpath $R2)
 
-        # run the backmapping
-        sbatch --job-name=backmap_assembly-${asmbl}_sample-${sam} backmap.sh -1 $R1 -2 $R2 -i $index -o $out_dir -s $sam  
+            # get the output directory
+            out_dir=$tmp/$asmbl
 
+            # check if there are less than 100 jobs running
+            while [ $(squeue -u $USER | grep backmap | wc -l) -gt 100 ]
+                do
+                    echo -e "\tMore than 100 jobs are running, waiting..."
+                    sleep 10
+                done
+            
+            # check if the output file already exists, if yes skip the creation
+            if [ -f $out_dir/${sam}_mapping.depth ]
+                then
+                    echo -e "\n\tBackmapping of $asmbl for $sam already exists, skipping"
+                    continue
+                fi
+
+            # if more than 100 jobs are already running, wait until there are less than 100 jobs running
+            while [ $(squeue -u $USER | grep backmap | wc -l) -gt 100 ]
+                do
+                    echo -e "\tMore than 100 jobs are running, waiting..."
+                    sleep 10
+                done
+
+            # run the backmapping
+            sbatch --job-name=backmap_assembly-${asmbl}_sample-${sam} backmap.sh -1 $R1 -2 $R2 -i $index -o $out_dir -s $sam  
     done
+fi
 
 # wait for all jobs to finish
 echo -e "\nWaiting for all backmapping jobs to finish..."
@@ -195,7 +201,7 @@ echo "Bin the MAGs"
 echo -e "##############################################################\n"
 
 for asmbl in $samples; do
-    out_dir=$out/MAGs
+    out_dir=$out/binning
     assembly=$assembly_dir/assemblies/$asmbl/$asmbl.contigs.fa
 
     # check if the output file already exists, if yes skip the creation
@@ -227,7 +233,7 @@ while [ $(squeue -u $USER | grep bin | wc -l) -gt 0 ]
     done
 
 # check if all bins were created
-if [ $(ls $out/MAGs/*_MAGs | wc -l) -ne $(echo $samples | wc -w) ]
+if [ $(ls $out/binning/MAGs/*_MAGs.done | wc -l) -ne $(echo $samples | wc -w) ]
 then
     echo "ERROR: Not all bins were created"
     exit 1

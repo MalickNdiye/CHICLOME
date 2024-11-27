@@ -36,31 +36,31 @@ threads=$(nproc)
 
 # summarize depths
 echo -e "\nSummarizing depths"
-echo "command: perl /home/bo4spe/bin/merge_depths.pl $input/*.depth > $output/${assembly}_depths.txt"
-merge_depths.pl $input/*.depth > $output/${asmbl}_depths.txt
+echo "command: ./merge_depths.pl $input/*.depth > $output/${assembly}_depths.txt"
+mkdir -p $output/depths
+./merge_depths.pl $input/*.depth > $output/depths/${assembly}_depths.txt
 
 # check if the depths were created
-if [ ! -f $output/${asmbl}_depths.txt ]
+if [ ! -f $output/depths/${assembly}_depths.txt ]
 then
     echo "ERROR: Summarizing depths failed"
     exit 1
 else
-    echo -e "\nSummarizing depths finished: output in $output/${asmbl}_depths.txt"
+    echo -e "\nSummarizing depths finished: output in $output/${assembly}_depths.txt"
 fi
 
 # run metabat2
 echo -e "\nRunning metabat2"
-echo "command: metabat2 -i $assembly_file -a $output/${asmbl}_depths.txt -o $output/${asmbl}_MAGs -m 2000 --maxEdges 500 -t $threads"
-metabat2 -i $assmbly_file -a $output/${asmbl}_depths.txt -o $output/${asmbl}_MAGs -m 2000 --maxEdges 500 -t $threads
+echo "command: metabat2 -i $assembly_file -a $output/${assembly}_depths.txt -o $output/${assembly}_MAGs -m 2000 --maxEdges 500 -t $threads"
+mkdir -p $output/MAGs
+metabat2 -i $assembly_file -a $output/depths/${assembly}_depths.txt -o $output/MAGs/${assembly}_MAG -m 2000 --maxEdges 500 -t $threads
 
-# check if the MAGs were created
-if [ ! -d $output/${asmbl}_MAGs ]
-then
-    echo "ERROR: MAGs binning failed"
-    exit 1
-else
-    echo -e "\nMAGs binning finished: output in $output/${asmbl}_MAGs"
-fi
+
+# write a done file
+touch $output/MAGs/${assembly}_MAGs.done
+
+echo -e "\nMAGs binning finished: output in $output/MAGs/${assembly}_MAGs"
+
 
 
 

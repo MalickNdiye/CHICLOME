@@ -39,7 +39,7 @@ echo -e "##############################################################\n"
 echo "##############################################################"
 echo "QC the MAGs: run checkm"
 echo -e "##############################################################\n"
-MAGs_dir=$mags/MAGs
+MAGs_dir=$mags/binning/MAGs
 checkm_db=$(yq '.CHECKM_DB' $config_file)
 
 # remove quotes from checkm_db
@@ -74,7 +74,7 @@ if [ -f $out_gtdbtk/gtdbtk.done ]
 then
     echo "Output directory $out_gtdbtk already exists. Skipping gtdbtk."
 else
-    sbatch --job-name=gtdbtk gtdbtk.sh -o $out_gtdbtk -m $MAGs_dir -d $gtdbtk_db
+    sbatch --job-name=gtdbtk gtdbtk.sh -o $out_gtdbtk -m $MAGs_dir -d $gtdbtk_db 
 fi
 
 # wait for gtdbtk to finish

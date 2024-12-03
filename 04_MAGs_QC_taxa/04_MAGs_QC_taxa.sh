@@ -45,8 +45,6 @@ conda activate assembly_env
 
 MAGs_dir=$mags/binning/MAGs
 checkm_db=$(yq '.CHECKM_DB' $config_file)
-
-# remove quotes from checkm_db
 checkm_db=$(echo $checkm_db | sed 's/"//g')
 
 out_chkm=$out/checkm_QC
@@ -63,7 +61,14 @@ fi
 echo "waiting for checkm to finish..."
 while [ ! -f $out_chkm/checkm.done ]
     do
-        sleep 10
+        if [ -f $out_chkm/checkm.fail ]
+        then
+            echo "checkm failed"
+            rm -rf $out_chkm
+            exit 1
+        else
+            sleep 10
+        fi
     done
 
 echo "##############################################################"
@@ -72,6 +77,7 @@ echo -e "##############################################################\n"
 
 out_gtdbtk=$out/gtdbtk
 gtdbtk_db=$(yq '.GTDBTK_DB' $config_file)
+gtdbtk_db=$(echo $gtdbtk_db | sed 's/"//g')
 
 # check if output directory is complete
 if [ -f $out_gtdbtk/gtdbtk.done ]
@@ -85,7 +91,14 @@ fi
 echo "waiting for gtdbtk to finish..."
 while [ ! -f $out_gtdbtk/gtdbtk.done ]
     do
-        sleep 10
+        if [ -f $out_gtdbtk/gtdbtk.fail ]
+        then
+            echo "GTDB-TK failed"
+            rm -rf $out_gtdbtk
+            exit 1
+        else
+            sleep 10
+        fi
     done
 
 echo "##############################################################"

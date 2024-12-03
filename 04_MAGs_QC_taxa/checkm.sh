@@ -3,7 +3,7 @@
 #SBATCH --output=log/%x.log
 #SBATCH --error=log/%x.err
 #SBATCH --time=10:00:00
-#SBATCH --mem=10G
+#SBATCH --mem=200G
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=15
 #SBATCH --account=pengel_beemicrophage
@@ -42,6 +42,7 @@ checkm qa $out/lineage.ms $out -o 2 --tab_table -t $threads -f $out/checkm_summa
 if [ ! -s $out/checkm_summary.txt ]
 then
     echo "checkm failed"
+    touch $out/checkm.fail
     exit 1
 else
     touch $out/checkm.done

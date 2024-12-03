@@ -33,12 +33,13 @@ conda activate MAGs_QC_taxa_env
 threads=$(nproc)
 
 # run gtdbtk
-export GTDBTK_DATA_PATH=gtdbtk_db
+export GTDBTK_DATA_PATH=$gtdbtk_db
 gtdbtk classify_wf --genome_dir $mags --extension fa --out_dir $out --cpus $threads
 
 # if gtdbtk failed
 if [ ! -s $out/gtdbtk.bac120.summary.tsv ]
 then
+    touch $out/gtdbtk.fail
     echo "gtdbtk failed"
     exit 1
 else

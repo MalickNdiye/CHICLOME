@@ -2,3 +2,5 @@
 *.err
 **/log
 *test*
+config2.yaml
+scratch_link

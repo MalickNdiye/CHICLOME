@@ -1,0 +1,7 @@
+SAMPLES:
+  sam_1:
+    - ../20241030_TestPhageSeq/data/trimmed_reads/1060-P3-A_R1_paired.fastq.gz
+    - ../20241030_TestPhageSeq/data/trimmed_reads/1060-P3-A_R2_paired.fastq.gz
+  sam_2:
+    - ../20241030_TestPhageSeq/data/trimmed_reads/819-P2-H_R1_paired.fastq.gz
+    - ../20241030_TestPhageSeq/data/trimmed_reads/819-P2-H_R2_paired.fastq.gz

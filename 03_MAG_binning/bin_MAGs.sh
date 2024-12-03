@@ -59,7 +59,7 @@ metabat2 -i $assembly_file -a $output/depths/${assembly}_depths.txt -o $output/M
 # write a done file
 touch $output/MAGs/${assembly}_MAGs.done
 
-echo -e "\nMAGs binning finished: output in $output/MAGs/${assembly}_MAGs"
+echo -e "\nMAGs binning finished: output bins named as $output/MAGs/${assembly}_MAGs*.fa"
 
 
 

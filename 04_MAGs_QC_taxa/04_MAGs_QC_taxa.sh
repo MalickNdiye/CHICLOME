@@ -39,6 +39,10 @@ echo -e "##############################################################\n"
 echo "##############################################################"
 echo "QC the MAGs: run checkm"
 echo -e "##############################################################\n"
+
+source ~/.bashrc
+conda activate assembly_env
+
 MAGs_dir=$mags/binning/MAGs
 checkm_db=$(yq '.CHECKM_DB' $config_file)
 

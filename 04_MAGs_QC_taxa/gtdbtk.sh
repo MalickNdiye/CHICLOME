@@ -3,7 +3,7 @@
 #SBATCH --output=log/%x_backmap.log
 #SBATCH --error=log/%x_bakmap.err
 #SBATCH --time=10:00:00
-#SBATCH --mem=10G
+#SBATCH --mem=100G
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=15
 #SBATCH --account=pengel_beemicrophage

@@ -3,7 +3,7 @@
 #SBATCH --output=log/%x_megahit.log
 #SBATCH --error=log/%x_megahit.err
 #SBATCH --time=02:00:00
-#SBATCH --mem=100G
+#SBATCH --mem=50G
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=20
 #SBATCH --account=pengel_beemicrophage

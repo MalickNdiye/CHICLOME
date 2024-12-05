@@ -39,6 +39,16 @@ echo "command: megahit -1 $R1 -2 $R2 -o $out --out-prefix $prefix -t $threads"
 
 megahit -1 $R1 -2 $R2 -o $out --out-prefix $prefix  -t $threads # it may help to add --presets meta-large or --presets meta-sensitive https://www.metagenomics.wiki/tools/assembly/megahit
 
+# if $out/$prefiix.contigs.fa exsis then Megahit finished
+if [ -f $out/$prefix.contigs.fa ]
+then
+    touch $out/megahit.done
+    echo -e "\nMegahit finished: otuput in $out"
+else
+    rm -rf $out
+    echo "Megahit failed"
+    exit 1
+fi
 
-echo -e "\nMegahit finished: otuput in $out"
+
 

@@ -63,7 +63,7 @@ do
     out_dir=$out/assemblies/$sample
 
     # check if the assembly already exists
-    if [ -d $out_dir ]
+    if [ -f $out_dir/megahit.done ]
     then
         # check if the assembly is complete
         if [ -f $out_dir/${sample}.contigs.fa ]
@@ -94,7 +94,14 @@ while [ $(squeue -u $USER | grep megahit | wc -l) -gt 0 ]
         sleep 10
     done
 
-echo -e "All MEGAHIT jobs finished\n"
+# check if all jobs finished successfully
+if [ $(grep -c "megahit.done" $out/assemblies/*/megahit.done | wc -l) -eq $(echo $samples | wc -w) ]
+then
+    echo -e "All MEGAHIT jobs finished successfully"
+else
+    echo -e "Not all MEGAHIT jobs finished successfully"
+    exit 1
+fi
 
 echo "#####################################################################"
 echo "Running QUAST to evaluate the assembly"
@@ -109,7 +116,7 @@ do
     out_dir=$out/quast/$sample
 
     # check if the assembly already exists, skip if it does
-    if [ -d $out_dir ]
+    if [ -f $out_dir/quast.done ]
     then
         echo -e "\nQuast for $sample already exists, skipping"
         continue
@@ -126,9 +133,9 @@ do
 done
 
 # wait for all jobs to finish
+echo -e "\nWaiting for all QUAST jobs to finish..."
 while [ $(squeue -u $USER | grep quast | wc -l) -gt 0 ]
     do
-        echo -e "\nWaiting for all QUAST jobs to finish..."
         sleep 10
     done
 
@@ -136,12 +143,12 @@ while [ $(squeue -u $USER | grep quast | wc -l) -gt 0 ]
 quast_dirs=$(find $out/quast -maxdepth 1 -mindepth 1 -type d)
 
 # check if number of quast directories is equal to the number of samples
-if [ $(echo $quast_dirs | wc -w) -ne $(echo $samples | wc -w) ]
+if [ $(grep -c "quast.done" $out/quast/*/quast.done | wc -l ) -eq $(echo $samples | wc -w) ]
     then
+        echo -e "\nGOOD: All QUAST jobs finished successfully"
+    else
         echo -e "\n ERROR: Not all quast jobs finished successfully"
         exit 1
-    else
-        echo -e "\nGOOD: All QUAST jobs finished successfully"
     fi
 
 # run multiqc

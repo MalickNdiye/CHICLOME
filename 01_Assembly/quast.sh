@@ -38,9 +38,13 @@ echo "command: quast.py -t $threads --no-snps --no-sv --memory-efficient -o $out
 quast.py -t $threads --no-snps --no-sv --memory-efficient -o ${out} ${in} 
 
 # check if quast finished successfully; i.e final directory exists
-if [ ! -d "$out" ]; then
+if [ ! -f $out/report.html ]; 
+then
+    rm -rf $out
     echo "Quast failed"
     exit 1
+else
+    touch $out/quast.done
+    echo "Quast finished: otuput in $out"
 fi
 
-echo "Quast finished: otuput in $out"

@@ -2,7 +2,7 @@
 
 #SBATCH --output=log/%x_simka.log
 #SBATCH --error=log/%x_simka.err
-#SBATCH --time=01:00:00
+#SBATCH --time=03:00:00
 #SBATCH --mem=300G
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=16
@@ -44,8 +44,9 @@ simka -in $input -out $out -max-reads $maxreads -abundance-min $abund \
 
 
 # check if the output directory exists
-if [ -d $out ]
+if [ -f $out/mat_abundance_jaccard.csv.gz ]
 then
+    touch $out/simka.done
     echo "Output directory exists, simka finished"
 else
     echo "Output directory does not exist, simka failed"

@@ -98,23 +98,23 @@ abund=2
 maxreads=0 # with 0, it uses all the reads. This can maybe put to 5-10Mio to speed up the process, but it will be less accurate
 
 # run simka
-if [ ! -f $out_dir/mat_abundance_jaccard.csv.gz ]
+if [ ! -f $out_dir/simka.done ]
     then
         echo -e "\tRunning simka: command: simka.sh -i $list_file -o $out_dir -m $maxreads -a $abund -c $maxcount -d $maxmerge"
         sbatch --job-name=simka simka.sh -i $list_file -o $out_dir -m $maxreads -a $abund -c $maxcount -d $maxmerge
-        echo -e "\tWaiting for all SIMKA jobs to finish..."
     else
         echo -e "\tSimka already ran, skipping"
 fi
 
 # wait for simka to finish, find jobname in squeue
+echo -e "\tWaiting for SIMKA job to finish..."
 while [ $(squeue -u $USER | grep simka | wc -l) -gt 0 ]
     do
         sleep 10
     done
 
 # check if simka finished successfully if file $out_dir/mat_abundance_jaccard.csv.gz exists
-if [ ! -f $out_dir/mat_abundance_jaccard.csv.gz ]
+if [ ! -f $out_dir/simka.done ]
     then
         echo -e "\tSimka failed, exiting"
         rm -rf $out_dir
@@ -140,3 +140,16 @@ conda activate Kmers_clustering_env
 
 echo "\tRunning Rscript to parse simka output, command: Rscript --vanilla simka_heatmap_similar.R $out_dir/mat_abundance_jaccard.csv.gz $output_heatmap $output_table jaccard"
 Rscript --vanilla simka_heatmap_similar.R $out_dir/mat_abundance_jaccard.csv.gz ${output_heatmap} ${output_table} jaccard
+
+# check if the output files exist
+if [ -f $output_heatmap ] && [ -f $output_table ]
+    then
+        echo -e "\tOutput files created in $parse_output\n"
+    else
+        echo -e "\tOutput files not created, exiting"
+        exit 1
+fi
+
+echo "##############################################################"   
+echo "02_Kmers_clustering.sh finished"
+echo -e "##############################################################\n"

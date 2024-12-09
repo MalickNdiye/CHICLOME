@@ -114,7 +114,7 @@ while read -r asmbl sam; do
     fi
 done < <(tail -n +2 "$simka_file")
 
-# if the number of files in all the subdirectories of $tmp is equal to the number of rows in the simka file (without the header) then all backmapping jobs were created
+# if the number of files in all the subdirectories of $tmp is equal to the number of rows in the simka file then all backmapping jobs were created
 if [ $(find $tmp -type f -ls | wc -l) -eq $(tail -n +2 $simka_file | wc -l) ]
 then
     echo -e "\nAll backmapping jobs were created, skipping"

@@ -2,11 +2,11 @@ name: MAGs_QC_taxa_env
 channels:
   - bioconda
   - conda-forge
-  - defaults
+  - default
+  - anaconda
 dependencies:
   - checkm-genome=1.2.3
   - gtdbtk=2.1.1
   - pip:
       - mxnet-mkl==1.6.0
       - numpy==1.23.1
-      - python-graphviz==0.8.4
